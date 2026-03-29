@@ -593,7 +593,7 @@ def get_printer_and_label(model_override: str = None):
     Returns (printer_dict, backend_instance, label_str).
     label_str is always "62" — tape detection is not possible via brother_ql.
     """
-    devices = discover()
+    devices = discover('pyusb')
     if not devices:
         raise RuntimeError(
             "No Brother QL printer found via USB. "
