@@ -49,12 +49,11 @@ import sys
 import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from brother_ql.labels import ALL_LABELS
+from brother_ql.labels import ALL_LABELS, FormFactor
 from brother_ql.raster import BrotherQLRaster
 from brother_ql.conversion import convert
 from brother_ql.backends.helpers import discover
 from brother_ql.backends.pyusb import BrotherQLBackendPyUSB as pyusb_backend
-
 try:
     from PIL import Image, ImageDraw, ImageFont
 except ImportError:
@@ -618,7 +617,7 @@ def prepare_image(img, label):
     Auto-scale + clamp for any Brother label.
     """
     # Find label object
-    lbl_obj = next((l for l in ALL_LABELS if l.name == label), None)
+    lbl_obj = next((l for l in ALL_LABELS if l.identifier == label), None)
     if lbl_obj is None:
         raise RuntimeError(f"Unsupported label: {label}")
 
