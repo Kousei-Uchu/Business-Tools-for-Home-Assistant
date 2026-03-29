@@ -47,7 +47,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = {"db_path": db_path, "template_paths": tpaths, "config": cfg}
 
     # Register static www/ path
-    hass.http.register_static_path(
+    await hass.http.async_register_static_path(
         "/filament_stock_panel",
         os.path.join(os.path.dirname(__file__), "www"),
         cache_headers=False,
