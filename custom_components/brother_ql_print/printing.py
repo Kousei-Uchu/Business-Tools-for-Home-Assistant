@@ -617,18 +617,18 @@ def prepare_image(img, label):
     """
     Auto-scale + clamp for any Brother label.
     """
-
-    if label not in ALL_LABELS:
+    # Find label object
+    lbl_obj = next((l for l in ALL_LABELS if l.name == label), None)
+    if lbl_obj is None:
         raise RuntimeError(f"Unsupported label: {label}")
 
-    label_info = ALL_LABELS[label]
-
     # Endless vs die-cut
-    if label_info['kind'] == 'endless':
-        target_width = label_info['printable_px']
+    if lbl_obj.form_factor == FormFactor.ENDLESS:
+        target_width = lbl_obj.printable_px
+        target_height = None
     else:
-        target_width = label_info['printable_px']
-        target_height = label_info['printable_px_y']
+        target_width = lbl_obj.printable_px
+        target_height = lbl_obj.printable_px_y
 
     img = img.convert("L")
 
