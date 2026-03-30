@@ -748,7 +748,7 @@ def render_and_print(template_path: str, fields: dict, quantity: int = 1,
     img = render_lbx_to_image(template_path, fields)
     img = prepare_image(img, label)
     print_image(img, label=label, quantity=quantity, preview=preview,
-                model_override=model_override)
+                printer_model=model_override)
 
 if __name__ == "__main__":
     render_and_print(r"C:\Users\amacc\OneDrive\Documents\GitHub\printing-tools\shared_resources\tag_label.lbx", {"Title": "Test Product", "Price": "$9.99", "Variant Barcode": "https://aidens3dp.com", "Colour": "Blue", "Deal Tag": "Limited Time Offer"}, quantity=1, preview=True)
