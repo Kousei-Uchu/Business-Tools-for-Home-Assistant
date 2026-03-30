@@ -49,10 +49,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     static_path = os.path.join(os.path.dirname(__file__), "www")
 
     # Register static files under /filament_stock_panel
-    hass.http.register_static_path(
+    await hass.http.async_register_static_paths(
         url_path="/filament_stock_panel",
         file_path=static_path,
-        cache_headers=False,  # Prevent caching during dev
+        cache_headers=False,
     )
 
     # Register panel
