@@ -52,7 +52,7 @@ from pathlib import Path
 from brother_ql.labels import ALL_LABELS, FormFactor
 from brother_ql.raster import BrotherQLRaster
 from brother_ql.conversion import convert
-from brother_ql.backends.helpers import discover
+from brother_ql.backends.helpers import discover, send
 from brother_ql.backends.pyusb import BrotherQLBackendPyUSB as pyusb_backend
 try:
     from PIL import Image, ImageDraw, ImageFont
@@ -635,18 +635,22 @@ def prepare_image(img, label):
 
     return img
 
-def print_image(img, label="62", quantity=1, preview=False, model_override: str = None):
-    """Send a prepared PIL image to the printer."""
+from brother_ql.raster import BrotherQLRaster
+from brother_ql.backends import get_backend
+from brother_ql.devicediscovery import discover
+from brother_ql.print import print_label  # convenience function
+
+def print_image(img, label="62", quantity=1, preview=False, printer_model: str = None, backend_identifier="pyusb"):
+    """
+    Send a PIL image to the Brother QL printer using the library's built-in print function.
+    Handles backend, rasterization, and USB automatically.
+    """
 
     if preview:
         img.show()
         return
 
-    printer, backend, _ = get_printer_and_label(model_override=model_override)
-
-    qlr = BrotherQLRaster(printer["model"])
-    qlr.exception_on_warning = True
-
+    qlr = BrotherQLRaster(printer_model)
     instructions = convert(
         qlr=qlr,
         images=[img],
@@ -660,9 +664,13 @@ def print_image(img, label="62", quantity=1, preview=False, model_override: str 
         hq=True,
         cut=True,
     )
-
     for _ in range(quantity):
-        backend.write(instructions)
+        send(
+            instructions=instructions,
+            printer_identifier=None,  # will pick first discovered
+            backend_identifier=backend_identifier,
+            blocking=True
+        )
 
 def main():
     parser = argparse.ArgumentParser(
